@@ -1,23 +1,30 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import HomeScreen from "./src/screens/HomeScreen.js";
-import ProfileScreen from "./src/screens/ProfileScreen.js";
-import AboutScreen from "./src/screens/AboutScreen.js";
+import Home from "./src/screens/Home.js";
+import Login from "./src/screens/Login.js";
+import SplashScreen from "./src/screens/SplashScreen.js"; 
+import Cadastro from "./src/screens/Cadastro.js";
 
 const Stack = createNativeStackNavigator();
 export default function App() {
   return (
   <NavigationContainer>
-    <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" 
-      component={HomeScreen}
-      options={{title: '(º_º)'}}
-      />
-      <Stack.Screen name="Profile" component={ProfileScreen}
+    <Stack.Navigator initialRouteName="SplashScreen">
+      <Stack.Screen name="SplashScreen" component={SplashScreen}
       options={{headerBackVisible: false}}
       />
-      <Stack.Screen name="About" component={AboutScreen}/>
+      <Stack.Screen name="Home" 
+      component={Home}
+      options={{title: "welcome", headerBackVisible: false}}
+      />
+      <Stack.Screen name="Profile" component={Login}
+      options={{headerBackVisible: false}}
+      />
+
+      <Stack.Screen name="Cadastro" component={Cadastro}
+      options={{headerBackVisible: false}}
+      />
     </Stack.Navigator>
   </NavigationContainer>    
   );

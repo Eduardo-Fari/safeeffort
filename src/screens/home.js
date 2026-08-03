@@ -1,19 +1,33 @@
 import { StyleSheet, Text, View, Button} from 'react-native'
 import React from 'react'
 
-const HomeScreen = ({navigation}) => {
+const Home = ({navigation}) => {
   //const navigation = useNavigation();
   return (
     <View style={styles.ContainerCadastro}>
-      <Text style={styles.TextCadastro}>homeScreen</Text>
+      <Image
+        source={require('../assets/logo.png')}
+        style={styles.Logo}
+      />
+      <Text style={styles.TextCadastro}>Safe Effort</Text>
 
       <Button  color={"purple"} title='Login' onPress={()=>{
         navigation.navigate('Login');
 
       }}/>
-      <Button color={"red"} title='Cadastrar-se' onPress={()=>{
+      <Button color={"red"} title='Criar conta' onPress={()=>{
         navigation.navigate('Cadastro');
       }}/>
+      <View style={{marginTop: 20}}>
+      <Image
+        source={require('../assets/logo2.png')}
+        style={styles.Logo2}
+      />
+      <Image
+        source={require('../assets/logo2.png')}
+        style={styles.Logo2}
+      />
+      </View>
     </View>
   )
 }

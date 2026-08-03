@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View, Button} from 'react-native'
 import React from 'react'
 
-const AboutScreen = ({navigation}) => {
+const Cadastro = ({navigation}) => {
   return (
     <View>
-      <Text>aboutScreen</Text>
+      <Text>Cadastro Screen</Text>
       <Button title='Voltar' onPress={()=>{
               navigation.goBack();
             }}/>
@@ -15,6 +15,6 @@ const AboutScreen = ({navigation}) => {
   )
 }
 
-export default AboutScreen
+export default Cadastro
 
 const styles = StyleSheet.create({})
