@@ -1,25 +1,31 @@
-import { StyleSheet, Text, View, Button } from 'react-native'
+import { StyleSheet, Text, View, Button, Image } from 'react-native'
 import React from 'react'
 
-const Login = ({navigation}) => {
+const LoginScreen = ({navigation}) => {
   return (
     <View>
       <View>
-        <img src={require('../assets/logo.png')} style={styles.Logo} />
+        <Image source={require('../../assets/IconLogin.png')} style={styles.Logo} />
       </View>
       <View>
-      <Text>Login Screen</Text>
-      <Button title='Voltar' onPress={()=>{
+      <Text></Text>
+      <Text></Text>
+      <Button title='Login' onPress={()=>{
               navigation.goBack();
-            }}/>
-      <Button title='Ir para About' onPress={()=>{
-            navigation.navigate('About');
+      }}/>
+      </View>
+      <View>
+      <Text>Não possui Conta?</Text>
+      <Button title='Criar Conta' onPress={()=>{
+            navigation.navigate('Home');
       }}/>
       </View>
     </View>
   )
 }
 
-export default Login
+export default LoginScreen
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  Logo: { width: 100, height: 100 } 
+})
