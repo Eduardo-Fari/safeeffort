@@ -12,13 +12,15 @@ const HomeScreen = ({navigation}) => {
       />
       <Text style={styles.TextHeader}>Safe Effort</Text>
       </View>
-      <TouchableOpacity style={styles.meuBotao1} onPress={() => navigation.replace('Home')}>
+      <View style={styles.divButao}>
+      <TouchableOpacity style={styles.meuBotao1} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.textoBotao1}>Login</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.meuBotao2} onPress={() => navigation.replace('Home')}>
         <Text style={styles.textoBotao2}>Criar conta</Text>
       </TouchableOpacity>
-      <View style={styles.divHome}>
+      </View>
+      <View style={styles.divIcons}>
       <Image
         source={require('../../assets/IconFacebook.png')}
         style={styles.Logo2}
@@ -40,23 +42,39 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",     
     alignItems: 'center',         
-    backgroundColor: '#bb9d9d',   
-    paddingTop: 80,
+    backgroundColor: '#fffefd',
+    gap: 45
     },
     divHeader:{
       flexDirection: "column",
-      margin:0
+      justifyContent: "center",
+      alignContent: "center",
+      margin:0,
+      borderBottomWidth: 1,
+      borderBottomColor:"#e06641"
     },
-    TextCadastro:{
-        color: "#a85454",
+    TextHeader:{
+        color: "#41E0B6",
         textAlign: "center",
         alignContent:"center",
+        fontSize: 60,
+        marginTop: -30
     },
     Logo: {
     margin: 0,
-    width: 250,          
-    height: 100,        
-    resizeMode: 'contain'
+    width: 450,          
+    height: 275,        
+    resizeMode: "cover",
+    opacity: "80%"
+    },
+    divIcons:{
+      flexDirection: "row", 
+      justifyContent: "center",
+      alignItems: 'center',
+      width: '100%',    
+      height: 80,        
+      marginBottom: 20,
+      marginTop: -30
     },
     Logo2: {
       width: 50,          
@@ -76,30 +94,40 @@ const styles = StyleSheet.create({
       alignItems: "center",
       resizeMode: 'contain',
     },
-    divHome:{
-      flexDirection: "row", 
-      justifyContent: "center",
-      alignItems: 'center',
-      width: '100%',    
-      height: 80,        
-      marginBottom: 20,
-      marginTop: -30
+    divButao:{
+      flexDirection: "column",
+      justifyContent: "space-between",
+      gap: 50
     },
     meuBotao1:{
-      width: 150,
+      width: 200,
       height: 50,
-      backgroundColor: "#c00000",
+      backgroundColor: "#558b7d",
       padding: 20,
-      borderRadius: 60,
-      marginTop: -30
+      borderRadius: 10,
+      marginTop: -30,
+      alignContent: "center",
+      justifyContent:"center"
     },
     meuBotao2:{
-      width: 150,
+      width: 200,
       height: 50,
-      backgroundColor: "#420c0c",
+      backgroundColor: "#e06641",
       padding: 20,
-      borderRadius: 60,
-      marginTop: -30
+      borderRadius: 10,
+      marginTop: -30,
+      alignContent: "center",
+      justifyContent:"center"
+    },
+    textoBotao1:{
+      color: "#ffffff",
+      alignSelf: "center",
+      fontSize: 30
+    },
+    textoBotao2:{
+       color: "#ffffff",
+      alignSelf: "center",
+      fontSize: 30
     }
 
 })

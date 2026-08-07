@@ -23,16 +23,16 @@ ContainerSplash:{
     flex: 1,                      
     justifyContent: 'center',     
     alignItems: 'center',         
-    backgroundColor: '#6fca4b',   
+    backgroundColor: '#41E0B6',   
     padding: 20,
     flexDirection: "column",
     },
   TextSplash:{
     marginTop: 10,
-      color: "#a85454",
+      color: "#fafafa",
       textAlign: "center",
       alignContent:"center",
-      fontSize: 20
+      fontSize: 50,
     },
   logo: {
     marginTop: -40,
