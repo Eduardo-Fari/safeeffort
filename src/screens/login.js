@@ -7,46 +7,54 @@ const LoginScreen = ({navigation}) => {
   const [Email, setEmail] = useState();
   const [senha, setSenha] = useState(true);
   return (
-    <View>
-      <View>
-        <Image source={require('../../assets/IconLogin.png')} style={styles.Logo} />
+    <View style={styles.Container1}>
+      <View style={styles.borda}>
+        <View style={styles.logo}>
+          <Image source={require('../../assets/IconLogin.png')} style={styles.Logo} />
+        </View>
+        <View style={styles.verificao}>
+          <View style={styles.Email}>
+            <Text styles={style.textLogin}>faça login</Text>
+            <TextInput
+              style={styles.input1}
+              placeholder='Email'
+              onChangeText={setEmail}
+              placeholderTextColor="#ccc"
+              value={Email}
+            />
+          </View>
+          <View style={styles.Senha}>
+            <TextInput
+              style={styles.input2}
+              placeholder='Senha'
+              onChangeText={setSenha}
+              placeholderTextColor="#ccc"
+              type="password"
+              secureTextEntry={secure}
+              value={Senha}
+            />
+            <TouchableOpacity onPress={() => {setSecure(!secure)}}></TouchableOpacity>
+          </View>
+        <View>
+        <View style={styles.login}>
+          <Button title='Login' onPress={()=>{navigation.goBack();}}/>
+        </View>
+        <View styles={styles.criar}>
+          <Text>Não possui Conta?</Text>
+          <Button title='Criar Conta' onPress={()=>{navigation.navigate('Cadastro');}}/>
+        </View>
       </View>
-      <View>
-      <Text styles={style.textHeader1}>faça login</Text>
-      <TextInput
-            style={styles.input}
-            placeholder='Email'
-            onChangeText={setEmail}
-            placeholderTextColor="#ccc"
-            value={Email}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder='Senha'
-            onChangeText={setSenha}
-            placeholderTextColor="#ccc"
-            type="password"
-            secureTextEntry={secure}
-            value={Senha}
-          />
-      <TouchableOpacity onPress={() => {setSecure(!secure)}}></TouchableOpacity>
-      </View>
-      <View>
-      <Button title='Login' onPress={()=>{
-              navigation.goBack();
-      }}/>
-      
-      <Text>Não possui Conta?</Text>
-      <Button title='Criar Conta' onPress={()=>{
-            navigation.navigate('Home');
-      }}/>
-      </View>
-    </View>
+    </View> 
   )
 }
 
 export default LoginScreen
 
 const styles = StyleSheet.create({
-  Logo: { width: 100, height: 100 } 
-})
+  Logo: {
+    margin: 0,
+    width: 450,          
+    height: 275,        
+    resizeMode: "cover",
+    opacity: "80%"
+}});
