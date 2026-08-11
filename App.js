@@ -1,3 +1,8 @@
+//atividade de pam - 2-DS (ams)
+//integrantes do projeto:
+//CATHARINA LANG RODRIGUES VANUCCHI
+//YASMIN CARDOSO VIANA
+//Eduardo Faria de Santana
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
