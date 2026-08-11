@@ -16,7 +16,7 @@ const HomeScreen = ({navigation}) => {
       <TouchableOpacity style={styles.meuBotao1} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.textoBotao1}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.meuBotao2} onPress={() => navigation.replace('Home')}>
+      <TouchableOpacity style={styles.meuBotao2} onPress={() => navigation.replace('Cadastro')}>
         <Text style={styles.textoBotao2}>Criar conta</Text>
       </TouchableOpacity>
       </View>
