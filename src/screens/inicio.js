@@ -16,21 +16,14 @@ import { Accelerometer } from 'expo-sensors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function InicioScreen() {
-  // Estados para Fotos e Câmera
   const [imageUri, setImageUri] = useState(null);
-
-  // Estados para GPS e Precisão
   const [location, setLocation] = useState(null);
-  const [accuracyColor, setAccuracyColor] = useState('#CCCCCC'); // Cinza padrão
-
-  // Estados para Acelerômetro
+  const [accuracyColor, setAccuracyColor] = useState('#CCCCCC');
   const [dadosAcel, setDadosAcel] = useState({ x: 0, y: 0, z: 0 });
 
   useEffect(() => {
-    // 1. Iniciar GPS (RNF01: Tratamento de Erros)
     obterLocalizacao();
 
-    // 2. Iniciar Acelerômetro
     let subscription = null;
     if (Platform.OS !== 'web') {
       try {
@@ -46,7 +39,7 @@ export default function InicioScreen() {
     };
   }, []);
 
-  // --- NÍVEL JÚNIOR: Captura de Foto com Tratamento Avançado de Permissão ---
+  // Nível Júnior - Câmera com redirecionamento para Configurações
   const tirarFoto = async () => {
     try {
       const { status, canAskAgain } = await ImagePicker.requestCameraPermissionsAsync();
@@ -80,13 +73,11 @@ export default function InicioScreen() {
     }
   };
 
-  // --- RF02: Captura e Feedback Visual do GPS ---
+  // RF02 - Cores Obrigatórias do GPS (Verde, Amarelo, Vermelho)
   const obterLocalizacao = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        return;
-      }
+      if (status !== 'granted') return;
 
       const loc = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
@@ -94,43 +85,42 @@ export default function InicioScreen() {
 
       setLocation(loc);
 
-      // Regra de cores de precisão
       const acc = loc.coords.accuracy;
       if (acc < 10) {
-        setAccuracyColor('#2ECC71'); // Verde: Alta precisão (< 10m)
+        setAccuracyColor('#2ECC71'); // Verde obrigatorio (< 10m)
       } else if (acc <= 30) {
-        setAccuracyColor('#F1C40F'); // Amarelo: Média precisão (10m - 30m)
+        setAccuracyColor('#F1C40F'); // Amarelo obrigatorio (10m - 30m)
       } else {
-        setAccuracyColor('#E74C3C'); // Vermelho: Baixa precisão (> 30m)
+        setAccuracyColor('#E74C3C'); // Vermelho obrigatorio (> 30m)
       }
     } catch (error) {
       console.log('GPS desligado ou indisponível.');
     }
   };
 
-  // --- NÍVEL PLENO: Trava de Segurança por Acelerômetro (> 2.0g) & RF01 (Persistência) ---
+  // Nível Pleno (Acelerômetro > 2.0g) + RF01 (AsyncStorage)
   const finalizarAuditoria = async () => {
-    const { x, y, z } = dadosAcel;
-
-    // Cálculo da aceleração vetorial agregada (em g)
-    const aceleracaoTotal = Math.sqrt(x * x + y * y + z * z);
-
-    // Trava de segurança do Nível Pleno
-    if (aceleracaoTotal > 2.0) {
-      Alert.alert(
-        'Bloqueio de Segurança',
-        'Instabilidade Física Detectada! Por favor, mantenha o celular estável ao fechar a auditoria.'
-      );
-      return;
-    }
-
-    // Salvar registro localmente (RF01 - AsyncStorage)
     try {
+      if (dadosAcel) {
+        const { x, y, z } = dadosAcel;
+        const aceleracaoTotal = Math.sqrt(x * x + y * y + z * z);
+
+        if (aceleracaoTotal > 2.0) {
+          Alert.alert(
+            'Instabilidade Física Detectada',
+            'O envio foi bloqueado devido a movimentação brusca ou queda do aparelho. Mantenha o dispositivo estável.'
+          );
+          return;
+        }
+      }
+
       const novoRegistro = {
         id: Date.now().toString(),
         data: new Date().toLocaleString('pt-BR'),
-        foto: imageUri,
-        localizacao: location ? `${location.coords.latitude}, ${location.coords.longitude}` : 'Sem GPS',
+        foto: imageUri || 'Sem foto',
+        localizacao: location
+          ? `${location.coords.latitude}, ${location.coords.longitude}`
+          : 'Sem sinal GPS',
       };
 
       const registrosAtuais = await AsyncStorage.getItem('@visitas_tecnicas');
@@ -139,9 +129,9 @@ export default function InicioScreen() {
 
       await AsyncStorage.setItem('@visitas_tecnicas', JSON.stringify(lista));
 
-      Alert.alert('Sucesso', 'Auditoria e Visita Técnica salvas localmente!');
+      Alert.alert('Sucesso', 'Auditoria concluída e salva no histórico local!');
     } catch (error) {
-      Alert.alert('Erro', 'Falha ao salvar a visita no histórico local.');
+      Alert.alert('Erro ao Finalizar', `Ocorreu uma falha ao salvar: ${error.message}`);
     }
   };
 
@@ -149,28 +139,28 @@ export default function InicioScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.titulo}>Registro de Visita Técnica</Text>
 
-      {/* RF02: Indicador Visual de Precisão do GPS */}
+      {/* Card do GPS - Fundo escuro igual ao card de HRV da carcaça (#4E7C6F) */}
       <View style={styles.gpsCard}>
         <View style={styles.gpsRow}>
-          <Text style={styles.label}>Sinal do GPS:</Text>
+          <Text style={styles.labelGPS}>Sinal do GPS:</Text>
           <View style={[styles.statusDot, { backgroundColor: accuracyColor }]} />
         </View>
-        <Text style={styles.subtext}>
+        <Text style={styles.subtextGPS}>
           {location
             ? `Precisão: ${location.coords.accuracy.toFixed(1)}m`
             : 'Obtendo localização...'}
         </Text>
       </View>
 
-      {/* Nível Júnior: Foto de Câmera */}
-      <TouchableOpacity style={styles.botao} onPress={tirarFoto}>
+      {/* Botão de Câmera - Laranja da carcaça (#E07A5F) */}
+      <TouchableOpacity style={styles.botaoCamera} onPress={tirarFoto}>
         <Text style={styles.textoBotao}>Tirar Foto da Câmera</Text>
       </TouchableOpacity>
 
       {imageUri && <Image source={{ uri: imageUri }} style={styles.previewImage} />}
 
-      {/* Nível Pleno: Botão para Fechar Auditoria */}
-      <TouchableOpacity style={[styles.botao, styles.botaoFinalizar]} onPress={finalizarAuditoria}>
+      {/* Botão de Finalizar - Verde-água da carcaça (#2EC4B6) */}
+      <TouchableOpacity style={styles.botaoFinalizar} onPress={finalizarAuditoria}>
         <Text style={styles.textoBotao}>Finalizar Auditoria</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -187,24 +177,23 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginVertical: 15,
-    color: '#333333',
+    color: '#555555',
   },
   gpsCard: {
     width: '100%',
     padding: 15,
-    borderRadius: 10,
-    backgroundColor: '#F8F9FA',
-    borderWidth: 1,
-    borderColor: '#EEEEEE',
+    borderRadius: 12,
+    backgroundColor: '#4E7C6F', // Verde escuro da carcaça
     marginBottom: 20,
   },
   gpsRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  label: {
+  labelGPS: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#FFFFFF',
     marginRight: 10,
   },
   statusDot: {
@@ -212,22 +201,26 @@ const styles = StyleSheet.create({
     height: 14,
     borderRadius: 7,
   },
-  subtext: {
+  subtextGPS: {
     fontSize: 12,
-    color: '#666666',
+    color: '#B2E2D8',
     marginTop: 5,
   },
-  botao: {
+  botaoCamera: {
     width: '100%',
-    backgroundColor: '#007AFF',
+    backgroundColor: '#E07A5F', // Laranja da carcaça original
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     marginBottom: 15,
   },
   botaoFinalizar: {
-    backgroundColor: '#2ECC71',
-    marginTop: 20,
+    width: '100%',
+    backgroundColor: '#2EC4B6', // Verde-água da carcaça original
+    padding: 15,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 10,
   },
   textoBotao: {
     color: '#FFFFFF',
@@ -237,7 +230,9 @@ const styles = StyleSheet.create({
   previewImage: {
     width: 200,
     height: 200,
-    borderRadius: 10,
+    borderRadius: 12,
+    borderColor: '#2EC4B6',
+    borderWidth: 2,
     marginVertical: 10,
   },
 });
