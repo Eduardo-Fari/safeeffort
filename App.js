@@ -1,8 +1,8 @@
-//alunos:
-//Eduardo
-//Catharina
-//Yasmin
-//usamos uma carcaça do projeto integrador para fazer a atividade
+//atividade de pam - 2-DS (ams)
+//integrantes do projeto:
+//CATHARINA LANG RODRIGUES VANUCCHI
+//YASMIN CARDOSO VIANA
+//Eduardo Faria de Santana
 import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from "@react-navigation/native";
@@ -53,3 +53,4 @@ export default function App() {
     </NavigationContainer>    
   );
 }
+
