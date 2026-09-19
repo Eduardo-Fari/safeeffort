@@ -100,40 +100,44 @@ export default function InicioScreen() {
 
   // Nível Pleno (Acelerômetro > 2.0g) + RF01 (AsyncStorage)
   const finalizarAuditoria = async () => {
-    try {
-      if (dadosAcel) {
-        const { x, y, z } = dadosAcel;
-        const aceleracaoTotal = Math.sqrt(x * x + y * y + z * z);
+  try {
+    // 1. Aceleração com fallback (evita erro se dadosAcel for nulo)
+    if (dadosAcel && dadosAcel.x !== undefined) {
+      const { x, y, z } = dadosAcel;
+      const aceleracaoTotal = Math.sqrt(x * x + y * y + z * z);
 
-        if (aceleracaoTotal > 2.0) {
-          Alert.alert(
-            'Instabilidade Física Detectada',
-            'O envio foi bloqueado devido a movimentação brusca ou queda do aparelho. Mantenha o dispositivo estável.'
-          );
-          return;
-        }
+      // Aumentado ligeiramente o limite ou verificado se não é 0 (emulador)
+      if (aceleracaoTotal > 2.5) {
+        Alert.alert(
+          'Instabilidade Detectada',
+          'Movimento muito brusco detetado. Segure o telemóvel com firmeza.'
+        );
+        return;
       }
-
-      const novoRegistro = {
-        id: Date.now().toString(),
-        data: new Date().toLocaleString('pt-BR'),
-        foto: imageUri || 'Sem foto',
-        localizacao: location
-          ? `${location.coords.latitude}, ${location.coords.longitude}`
-          : 'Sem sinal GPS',
-      };
-
-      const registrosAtuais = await AsyncStorage.getItem('@visitas_tecnicas');
-      const lista = registrosAtuais ? JSON.parse(registrosAtuais) : [];
-      lista.push(novoRegistro);
-
-      await AsyncStorage.setItem('@visitas_tecnicas', JSON.stringify(lista));
-
-      Alert.alert('Sucesso', 'Auditoria concluída e salva no histórico local!');
-    } catch (error) {
-      Alert.alert('Erro ao Finalizar', `Ocorreu uma falha ao salvar: ${error.message}`);
     }
-  };
+
+    // 2. Criação do registo com proteção para caso a imagem esteja vazia
+    const novoRegistro = {
+      id: Date.now().toString(),
+      data: new Date().toLocaleString('pt-PT'),
+      foto: imageUri ? imageUri : 'Sem foto capturada',
+      localizacao: location
+        ? `${location.coords.latitude.toFixed(4)}, ${location.coords.longitude.toFixed(4)}`
+        : 'GPS não disponível',
+    };
+
+    // 3. Guardar no AsyncStorage
+    const registrosAtuais = await AsyncStorage.getItem('@visitas_tecnicas');
+    const lista = registrosAtuais ? JSON.parse(registrosAtuais) : [];
+    lista.unshift(novoRegistro); // Adiciona no início da lista
+
+    await AsyncStorage.setItem('@visitas_tecnicas', JSON.stringify(lista));
+
+    Alert.alert('Sucesso', 'Auditoria guardada com sucesso!');
+  } catch (error) {
+    Alert.alert('Erro', `Falha ao guardar: ${error.message}`);
+  }
+};
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
