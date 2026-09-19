@@ -3,6 +3,7 @@
 //CATHARINA LANG RODRIGUES VANUCCHI
 //YASMIN CARDOSO VIANA
 //Eduardo Faria de Santana
+//foi utilizado a "carcaça" do projeto interdisciplinar
 import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from "@react-navigation/native";
