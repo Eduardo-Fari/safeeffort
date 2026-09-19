@@ -1,104 +1,96 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  TextInput,
-  FlatList,
-  ActivityIndicator,
-  Platform,
-} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, Alert, Linking } from 'react-native';
 import * as Contacts from 'expo-contacts';
 
-export default function ContatosScreen() {
+export default function ListaContatos() {
   const [contatos, setContatos] = useState([]);
-  const [busca, setBusca] = useState('');
-  const [pagina, setPagina] = useState(0);
-  const [carregando, setCarregando] = useState(false);
-  const [temMais, setTemMais] = useState(true);
 
-  const PAGE_SIZE = 20;
+  const carregarContatos = async () => {
+    // 1. Verifica/solicita permissão
+    const { status, canAskAgain } = await Contacts.requestPermissionsAsync();
 
-  useEffect(() => {
-    carregarContatos(0, busca, true);
-  }, [busca]);
+    if (status === 'granted') {
+      const { data } = await Contacts.getContactsAsync({
+        fields: [Contacts.Fields.Name, Contacts.Fields.PhoneNumbers],
+      });
 
-  const carregarContatos = async (pageOffset, termoBusca, reiniciar = false) => {
-    if (carregando) return;
-    setCarregando(true);
-
-    try {
-      if (Platform.OS === 'web') {
-        setCarregando(false);
-        return;
+      if (data && data.length > 0) {
+        setContatos(data);
       }
-
-      const { status } = await Contacts.requestPermissionsAsync();
-      if (status === 'granted') {
-        const { data } = await Contacts.getContactsAsync({
-          fields: [Contacts.Fields.Name, Contacts.Fields.PhoneNumbers],
-          name: termoBusca ? termoBusca : undefined,
-          pageSize: PAGE_SIZE,
-          pageOffset: pageOffset * PAGE_SIZE,
-        });
-
-        if (data.length < PAGE_SIZE) setTemMais(false);
-        else setTemMais(true);
-
-        if (reiniciar) {
-          setContatos(data);
-          setPagina(1);
-        } else {
-          setContatos((prev) => [...prev, ...data]);
-          setPagina(pageOffset + 1);
-        }
+    } else {
+      // 2. Se a permissão foi negada permanentemente
+      if (!canAskAgain) {
+        Alert.alert(
+          'Permissão Necessária',
+          'A permissão para aceder aos contactos foi desativada. Deseja abrir as configurações do dispositivo para permitir o acesso?',
+          [
+            { text: 'Cancelar', style: 'cancel' },
+            { 
+              text: 'Abrir Configurações', 
+              onPress: () => Linking.openSettings() // Leva o utilizador para ativar a permissão
+            },
+          ]
+        );
+      } else {
+        Alert.alert('Aviso', 'Permissão de acesso aos contactos negada.');
       }
-    } catch (error) {
-      console.log('Erro ao carregar contatos:', error);
-    }
-    setCarregando(false);
-  };
-
-  const carregarMaisContatos = () => {
-    if (!carregando && temMais) {
-      carregarContatos(pagina, busca, false);
     }
   };
 
   return (
-    <SafeAreaView style={styles.mainContainer}>
-      <View style={{ padding: 16, flex: 1 }}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Buscar contatos na memória nativa..."
-          value={busca}
-          onChangeText={setBusca}
-        />
-        <FlatList
-          data={contatos}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.cardContato}>
-              <Text style={styles.nomeText}>{item.name}</Text>
-              {item.phoneNumbers && item.phoneNumbers.length > 0 && (
-                <Text style={styles.subText}>{item.phoneNumbers[0].number}</Text>
-              )}
-            </View>
-          )}
-          onEndReached={carregarMaisContatos}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={carregando ? <ActivityIndicator size="small" color="#2EC4B6" /> : null}
-        />
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.botao} onPress={carregarContatos}>
+        <Text style={styles.textBotao}>Listar Contatos</Text>
+      </TouchableOpacity>
+      <FlatList
+        data={contatos}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.itemContato}>
+            <Text style={styles.nomeContato}>{item.name}</Text>
+            {item.phoneNumbers && item.phoneNumbers.length > 0 && (
+              <Text style={styles.telefoneContato}>{item.phoneNumbers[0].number}</Text>
+            )}
+          </View>
+        )}
+        style={styles.lista}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  mainContainer: { flex: 1, backgroundColor: '#FFFFFF' },
-  searchInput: { height: 45, borderWidth: 1, borderColor: '#CCCCCC', borderRadius: 8, paddingHorizontal: 12, marginBottom: 12 },
-  cardContato: { borderWidth: 1.5, borderColor: '#2EC4B6', borderRadius: 12, padding: 12, marginBottom: 10 },
-  nomeText: { fontSize: 16, fontWeight: 'bold', color: '#333333' },
-  subText: { fontSize: 12, color: '#777777' },
+  container: {
+    flex: 1,
+    paddingTop: 50,
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+  },
+  botao: {
+    backgroundColor: '#34C759',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  textBotao: {
+    color: '#FFF',
+    fontWeight: 'bold',
+  },
+  lista: {
+    width: '100%',
+    paddingHorizontal: 15,
+  },
+  itemContato: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#CCCCCC',
+  },
+  nomeContato: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  telefoneContato: {
+    fontSize: 14,
+    color: '#666666',
+  },
 });

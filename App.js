@@ -1,3 +1,8 @@
+//alunos:
+//Eduardo
+//Catharina
+//Yasmin
+//usamos uma carcaça do projeto integrador para fazer a atividade
 import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from "@react-navigation/native";
