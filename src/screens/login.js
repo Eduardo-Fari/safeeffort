@@ -26,8 +26,10 @@ const LoginScreen = ({navigation}) => {
     if (emailDigitado.toLowerCase() === mail.toLowerCase() && senhaDigitada === sen.toString()) {
       if (typeof window !== 'undefined' && window.alert) {
         alert("Login realizado com sucesso!");
+        navigation.navigate('Inicio');
       } else {
         Alert.alert("Sucesso", "Login realizado com sucesso!");
+        navigation.navigate('Inicio');
       }
     } else {
       if (typeof window !== 'undefined' && window.alert) {
@@ -40,7 +42,7 @@ const LoginScreen = ({navigation}) => {
   return (
     <View style={styles.Container}>
       <TouchableOpacity style={styles.voltar} onPress={()=> {
-        navigation.navigate('Home');
+        navigation.goBack();
       }}>
         <Text style={styles.voltarSeta}>{'<'}</Text>
       </TouchableOpacity>

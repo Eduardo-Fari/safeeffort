@@ -62,7 +62,7 @@ const CadastroScreen = ({navigation}) => {
 
           <TouchableOpacity 
               style={styles.botaoLogin} 
-              onPress={() => { navigation.goBack(); }}
+              onPress={() => { navigation.navigate('Inicio'); }}
             >
               <Text style={styles.textLogin}>Criar Conta</Text>
             </TouchableOpacity>
